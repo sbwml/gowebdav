@@ -225,7 +225,7 @@ func handleDirList(fs webdav.FileSystem, w http.ResponseWriter, req *http.Reques
 				}
 
 				table th, table td {
-					padding: 14px;
+					padding: 0.75em 0;
 					text-align: left;
 					/* border-bottom: 1px solid #ddd; */
 				}
