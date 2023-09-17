@@ -132,7 +132,7 @@ func handleDirList(fs webdav.FileSystem, w http.ResponseWriter, req *http.Reques
 	<header>
 	<div class="wrapper"><div class="breadcrumbs">Folder Path</div>
 			<h1>
-			<a href="/">/ </a>%s
+			<a href="/">/</a>%s
 			</h1>
 		</div>
 	</header>
