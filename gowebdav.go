@@ -147,172 +147,335 @@ func handleDirList(fs webdav.FileSystem, w http.ResponseWriter, req *http.Reques
 			<meta charset="utf-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			<style>
-				* { padding: 0; margin: 0; box-sizing: border-box; }
-				body {
-					font-family: Inter, system-ui, sans-serif;
-					font-size: 16px;
-					text-rendering: optimizespeed;
-					background-color: #f3f6f7;
-					min-height: 100vh;
-				}
+			* { padding: 0; margin: 0; box-sizing: border-box; }
 
-				body, a, svg, .layout.current, .layout.current svg, .go-up {
-					color: #333;
-					text-decoration: none;
-				}
+			body {
+				font-family: Inter, system-ui, sans-serif;
+				font-size: 16px;
+				text-rendering: optimizespeed;
+				background-color: #f3f6f7;
+				min-height: 100vh;
+			}
 
-				header {
-					padding-top: 15px;
-					padding-bottom: 15px;
-					box-shadow: 0px 0px 20px 0px rgb(0 0 0 / 10%%);
-				}
+			img,
+			svg {
+				vertical-align: middle;
+				z-index: 1;
+			}
 
-				header, main {
-					background-color: white;
-				}
+			img {
+				max-width: 100%%;
+				max-height: 100%%;
+				border-radius: 5px;
+			}
 
-				header, .meta {
-					padding-left: 5%%;
-					padding-right: 5%%;
-				}
+			td img {
+				max-width: 1.5em;
+				max-height: 2em;
+				object-fit: cover;
+			}
 
-				.breadcrumbs {
-					text-transform: uppercase;
-					font-size: 10px;
-					letter-spacing: 1px;
-					color: #939393;
-					margin-bottom: 5px;
-					padding-left: 3px;
-				}
+			body,
+			a,
+			svg,
+			.layout.current,
+			.layout.current svg,
+			.go-up {
+				color: #333;
+				text-decoration: none;
+			}
 
-				main {
-					margin: 3em auto 0;
-					border-radius: 5px;
-					box-shadow: 0 2px 5px 1px rgb(0 0 0 / 5%%);
-				}
+			.wrapper {
+				max-width: 1200px;
+				margin-left: auto;
+				margin-right: auto;
+			}
 
-				h1 {
-					font-size: 20px;
-					font-family: Poppins, system-ui, sans-serif;
-					font-weight: normal;
-					white-space: nowrap;
-					overflow-x: hidden;
-					text-overflow: ellipsis;
-					color: #c5c5c5;
-				}
-				
-				h1 a,
-				th a {
-					color: #000;
-				}
-				
-				h1 a {
-					padding: 0 3px;
-					margin: 0 1px;
-				}
-				
-				h1 a:hover {
-					background: #ffffc4;
-				}
-				
-				h1 a:first-child {
-					margin: 0;
-				}
+			header,
+			.meta {
+				padding-left: 5%%;
+				padding-right: 5%%;
+			}
 
-				table {
-					width: 100%%;
-					border-collapse: collapse;
-				}
+			td a {
+				color: #006ed3;
+				text-decoration: none;
+			}
 
-				table th, table td {
-					padding: 0.75em 0;
-					text-align: left;
-					/* border-bottom: 1px solid #ddd; */
-				}
+			td a:hover {
+				color: #0095e4;
+			}
 
-				th:first-child, td:first-child {
-					width: 5%%;
+			th:first-child,
+			td:first-child {
+				width: 5%%;
+			}
+
+			th:last-child,
+			td:last-child {
+				width: 5%%;
+			}
+
+			.size,
+			.timestamp {
+				font-size: 14px;
+			}
+
+			header {
+				padding-top: 15px;
+				padding-bottom: 15px;
+				box-shadow: 0px 0px 20px 0px rgb(0 0 0 / 10%%);
+			}
+
+			.breadcrumbs {
+				text-transform: uppercase;
+				font-size: 10px;
+				letter-spacing: 1px;
+				color: #939393;
+				margin-bottom: 5px;
+				padding-left: 3px;
+			}
+
+			h1 {
+				font-size: 20px;
+				font-family: Poppins, system-ui, sans-serif;
+				font-weight: normal;
+				white-space: nowrap;
+				overflow-x: hidden;
+				text-overflow: ellipsis;
+				color: #c5c5c5;
+			}
+
+			h1 a,
+			th a {
+				color: #000;
+			}
+
+			h1 a {
+				padding: 0 3px;
+				margin: 0 1px;
+			}
+
+			h1 a:hover {
+				background: #ffffc4;
+			}
+
+			h1 a:first-child {
+				margin: 0;
+			}
+
+			header,
+			main {
+				background-color: white;
+			}
+
+			main {
+				margin: 3em auto 0;
+				border-radius: 5px;
+				box-shadow: 0 2px 5px 1px rgb(0 0 0 / 5%%);
+			}
+
+			.meta {
+				display: flex;
+				gap: 1em;
+				font-size: 14px;
+				padding-top: 1em;
+				padding-bottom: 0.2em;
+			}
+
+			#summary {
+				display: flex;
+				gap: 1em;
+				align-items: center;
+				margin-right: auto;
+			}
+
+			.layout,
+			.layout svg {
+				color: #9a9a9a;
+			}
+
+			table {
+				width: 100%%;
+				border-collapse: collapse;
+			}
+
+			tbody tr,
+			tbody tr a,
+			.entry a {
+				transition: all .15s;
+			}
+
+			tbody tr:hover,
+			.grid .entry a:hover {
+				background-color: #f4f9fd;
+			}
+
+			th,
+			td {
+				text-align: left;
+			}
+
+			th {
+				position: sticky;
+				top: 0;
+				background: white;
+				white-space: nowrap;
+				z-index: 2;
+				text-transform: uppercase;
+				font-size: 14px;
+				letter-spacing: 1px;
+				padding: .75em 0;
+			}
+
+			td {
+				white-space: nowrap;
+			}
+
+			td:nth-child(2) {
+				width: 75%%;
+			}
+
+			td:nth-child(2) a {
+				padding: 1em 0;
+				display: block;
+			}
+
+			td:nth-child(3),
+			th:nth-child(3) {
+				padding: 0 20px 0 20px;
+				min-width: 150px;
+			}
+
+			td .go-up {
+				text-transform: uppercase;
+				font-size: 12px;
+				font-weight: bold;
+			}
+
+			.name,
+			.go-up {
+				word-break: break-all;
+				overflow-wrap: break-word;
+				white-space: pre-wrap;
+			}
+
+			span.name {
+				margin-left: 0.3em;
+			}
+
+			.listing .icon-tabler {
+				color: #454545;
+			}
+
+			.listing .icon-tabler-folder-filled {
+				color: #ffb900 !important;
+			}
+
+			footer {
+				padding: 40px 20px;
+				font-size: 12px;
+				text-align: center;
+			}
+
+			@media (max-width: 600px) {
+				.hideable {
+					display: none;
 				}
 
 				td:nth-child(2) {
-					width: 75%%;
+					width: auto;
 				}
 
-				td {
-					white-space: nowrap;
+				th:nth-child(3),
+				td:nth-child(3) {
+					padding-right: 5%%;
+					text-align: right;
 				}
 
-				table th:hover, table td:hover {
-					background-color: #f4f9fd;
+				h1 {
+					color: #000;
 				}
 
-				table tr:hover {
-					background-color: #f4f9fd;
+				h1 a {
+					margin: 0;
+				}
+			}
+
+			@media (prefers-color-scheme: dark) {
+				html {
+					background: black;
 				}
 
-				a {
-					text-decoration: none;
-					color: #006ed3;
+				body {
+					background: linear-gradient(180deg, rgb(34 50 66) 0%%, rgb(26 31 38) 100%%);
+					background-attachment: fixed;
 				}
 
-				.size, .timestamp {
-					font-size: 14px;
-				}
-
-				.directory-link, .file-link {
-					margin-top: 4px;
-					margin-left: 8px;
-					position: absolute;
-				}
-
-				path {
-					color: #454545;
-				}
-
-				.wrapper {
-					max-width: 1200px;
-					margin-left: auto;
-					margin-right: auto;
-				}
-
+				body,
+				a,
+				svg,
+				.layout.current,
+				.layout.current svg,
 				.go-up {
-					word-break: break-all;
-					overflow-wrap: break-word;
-					white-space: pre-wrap;
+					color: #ccc;
 				}
 
-				td .go-up {
-					text-transform: uppercase;
-					font-size: 12px;
-					font-weight: bold;
-					margin-top: 4px;
-					margin-left: 8px;
-					position: absolute;
-				}
-				
-				.name, .go-up {
-					word-break: break-all;
-					overflow-wrap: break-word;
-					white-space: pre-wrap;
+				h1 a,
+				th a {
+					color: white;
 				}
 
-				footer {
-					padding: 40px 20px;
-					font-size: 12px;
-					text-align: center;
+				h1 {
+					color: white;
 				}
 
-				@media (max-width: 600px) {
-					.hideable {
-						display: none;
-					}
+				h1 a:hover {
+					background: hsl(213deg 100%% 73%% / 20%%);
 				}
+
+				header,
+				main,
+				.grid .entry {
+					background-color: #101720;
+				}
+
+				tbody tr:hover,
+				.grid .entry a:hover {
+					background-color: #162030;
+					color: #fff;
+				}
+
+				th {
+					background-color: #18212c;
+				}
+
+				td a,
+				.listing .icon-tabler {
+					color: #abc8e3;
+				}
+
+				td a:hover,
+				td a:hover .icon-tabler {
+					color: white;
+				}
+
+				#Wordmark path,
+				#R path {
+					fill: #ccc !important;
+				}
+				#R circle {
+					stroke: #ccc !important;
+				}
+			}
 			</style>
 		</head>
 		<body>
 			%s
 			<div class="wrapper">
 			<main>
+				<div class="meta">
+				</div>
 				<div class="listing">
 				<table aria-describedby="summary">
 				<thead>
@@ -321,6 +484,7 @@ func handleDirList(fs webdav.FileSystem, w http.ResponseWriter, req *http.Reques
 						<th>Name</th>
 						<th class="size">Size</th>
 						<th class="timestamp hideable">Modified</th>
+						<th class="hideable"></th>
 					</tr>
 				</thead>
 				<tbody>`, folderName, nav)
@@ -337,14 +501,14 @@ func handleDirList(fs webdav.FileSystem, w http.ResponseWriter, req *http.Reques
 		}
 		name := link
 		if d.IsDir() {
-			fmt.Fprintf(w, "<tr class=\"file\"><td></td><td><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"icon icon-tabler icon-tabler-folder-filled\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"></path><path d=\"M9 3a1 1 0 0 1 .608 .206l.1 .087l2.706 2.707h6.586a3 3 0 0 1 2.995 2.824l.005 .176v8a3 3 0 0 1 -2.824 2.995l-.176 .005h-14a3 3 0 0 1 -2.995 -2.824l-.005 -.176v-11a3 3 0 0 1 2.824 -2.995l.176 -.005h4z\" stroke-width=\"0\" fill=\"#ffb900\"></path></svg> <a class=\"%s\" href=\"%s\">%s</a></td>", getLinkClass(d), link, name)
-			fmt.Fprintf(w, "<td class=\"size\">—</td>")
+			fmt.Fprintf(w, "<tr class=\"file\"><td></td><td><a href=\"%s\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"icon icon-tabler icon-tabler-folder-filled\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"></path><path d=\"M9 3a1 1 0 0 1 .608 .206l.1 .087l2.706 2.707h6.586a3 3 0 0 1 2.995 2.824l.005 .176v8a3 3 0 0 1 -2.824 2.995l-.176 .005h-14a3 3 0 0 1 -2.995 -2.824l-.005 -.176v-11a3 3 0 0 1 2.824 -2.995l.176 -.005h4z\" stroke-width=\"0\" fill=\"#ffb900\"></path></svg><span class=\"name\">%s</span></a></td>", link, name)
+			fmt.Fprintf(w, "<td>—</td>")
 		} else {
-			fmt.Fprintf(w, "<tr class=\"file\"><td></td><td><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"icon icon-tabler icon-tabler-file\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"></path><path d=\"M14 3v4a1 1 0 0 0 1 1h4\"></path><path d=\"M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z\"></path></svg> <a class=\"%s\" href=\"%s\">%s</a></td>", getLinkClass(d), link, name)
+			fmt.Fprintf(w, "<tr class=\"file\"><td></td><td><a href=\"%s\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"icon icon-tabler icon-tabler-file\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"></path><path d=\"M14 3v4a1 1 0 0 0 1 1h4\"></path><path d=\"M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z\"></path></svg><span class=\"name\">%s</span></a></td>", link, name)
 			fmt.Fprintf(w, "<td class=\"size\">%s</td>", formatSize(d.Size()))
 		}
 		fmt.Fprintf(w, "<td class=\"timestamp hideable\">%s</td>", d.ModTime().Format("2006/01/02 15:04:05"))
-		fmt.Fprintln(w, "<th class=\"hideable\"></th></tr>")
+		fmt.Fprintln(w, "<td class=\"hideable\"></td></tr>")
 	}
 	fmt.Fprintf(w, `
 				</tbody>
@@ -356,13 +520,6 @@ func handleDirList(fs webdav.FileSystem, w http.ResponseWriter, req *http.Reques
 		<footer></footer>
 		</html>`)
 	return true
-}
-
-func getLinkClass(fi os.FileInfo) string {
-	if fi.IsDir() {
-		return "directory-link"
-	}
-	return "file-link"
 }
 
 func formatSize(bytes int64) string {
