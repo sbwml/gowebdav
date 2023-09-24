@@ -18,7 +18,7 @@ import (
 
 var (
 	flagRootDir    = flag.String("dir", "", "webdav root dir")
-	flagHttpAddr   = flag.String("http", ":80", "http or https address")
+	flagHttpAddr   = flag.String("port", "5005", "http or https port")
 	flagHttpsMode  = flag.Bool("https-mode", false, "use https mode")
 	flagCertFile   = flag.String("https-cert-file", "cert.pem", "https cert file")
 	flagKeyFile    = flag.String("https-key-file", "key.pem", "https key file")
@@ -29,10 +29,10 @@ var (
 )
 
 func init() {
+	flag.Parse()
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage of WebDAV Server\n")
 		flag.PrintDefaults()
-		fmt.Fprintf(os.Stderr, "\nReport bugs to <chaishushan@gmail.com>.\n")
 	}
 }
 
@@ -49,7 +49,17 @@ func (d SkipBrokenLink) Stat(ctx context.Context, name string) (os.FileInfo, err
 }
 
 func main() {
-	flag.Parse()
+	if *flagRootDir == "" || *flagHttpAddr == "" {
+		flag.Usage()
+		fmt.Fprintln(os.Stderr, "\nError: -dir and -http flags are required.")
+		os.Exit(0)
+	}
+
+	httpAddress := *flagHttpAddr
+	if !strings.Contains(httpAddress, ":") {
+		httpAddress = ":" + httpAddress
+	}
+
 	fs := &webdav.Handler{
 		FileSystem: SkipBrokenLink{webdav.Dir(*flagRootDir)},
 		LockSystem: webdav.NewMemLS(),
@@ -79,10 +89,19 @@ func main() {
 		}
 		fs.ServeHTTP(w, req)
 	})
+
 	if *flagHttpsMode {
-		http.ListenAndServeTLS(*flagHttpAddr, *flagCertFile, *flagKeyFile, nil)
+		err := http.ListenAndServeTLS(httpAddress, *flagCertFile, *flagKeyFile, nil)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to start server: %v\n", err)
+			os.Exit(1)
+		}
 	} else {
-		http.ListenAndServe(*flagHttpAddr, nil)
+		err := http.ListenAndServe(httpAddress, nil)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to start server: %v\n", err)
+			os.Exit(1)
+		}
 	}
 }
 
@@ -119,7 +138,6 @@ func handleDirList(fs webdav.FileSystem, w http.ResponseWriter, req *http.Reques
 	folderName := filepath.Base(req.URL.Path)
 	currentDir := req.URL.Path
 
-	// 分割路径，创建目录路径导航
 	parts := strings.Split(currentDir, "/")
 	var navLinks []string
 	for i := 1; i < len(parts); i++ {
@@ -127,7 +145,6 @@ func handleDirList(fs webdav.FileSystem, w http.ResponseWriter, req *http.Reques
 		navLinks = append(navLinks, fmt.Sprintf(`<a href="%s">%s</a>`, navPath, parts[i]))
 	}
 
-	// 创建目录路径导航字符串
 	nav := fmt.Sprintf(`
 	<header>
 	<div class="wrapper"><div class="breadcrumbs">Folder Path</div>
